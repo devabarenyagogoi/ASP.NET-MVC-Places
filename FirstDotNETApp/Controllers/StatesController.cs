@@ -1,144 +1,117 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using FirstDotNETApp.Interfaces;
+using FirstDotNETApp.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using FirstDotNETApp.Data;
-using FirstDotNETApp.Models;
 
 namespace FirstDotNETApp.Controllers
 {
     public class StatesController : Controller
     {
-        private readonly AppDbContext _context;
+        private readonly IStateService _stateService;
+        private readonly ICountryService _countryService;
 
-        public StatesController(AppDbContext context)
+        public StatesController(IStateService stateService, ICountryService countryService)
         {
-            _context = context;
+            _stateService = stateService;
+            _countryService = countryService;
         }
 
         // GET: States
         public async Task<IActionResult> Index()
         {
-            var appDbContext = _context.States.Include(s => s.Country);
-            return View(await appDbContext.ToListAsync());
+            var states = await _stateService.GetAllStatesAsync();
+            return View(states);
         }
 
         // GET: States/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            if (id == null) return NotFound();
 
-            var state = await _context.States
-                .Include(s => s.Country)
-                .FirstOrDefaultAsync(m => m.StateId == id);
-            if (state == null)
-            {
-                return NotFound();
-            }
+            var vm = await _stateService.GetStateByIdAsync(id.Value);
 
-            return View(state);
+            if (vm == null) return NotFound();
+
+            return View(vm);
         }
 
         // GET: States/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            ViewData["CountryId"] = new SelectList(_context.Countries, "CountryId", "CountryName");
-            return View();
+            var countries = await _countryService.GetAllCountriesAsync();
+            ViewData["CountryId"] = new SelectList(countries, "CountryId", "CountryName");
+            return View(new StateViewModel());
         }
 
         // POST: States/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("StateId,StateName,CountryId")] State state)
+        public async Task<IActionResult> Create(StateViewModel vm)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(state);
-                await _context.SaveChangesAsync();
+                await _stateService.CreateStateAsync(vm);
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["CountryId"] = new SelectList(_context.Countries, "CountryId", "CountryName", state.CountryId);
-            return View(state);
+
+            var countries = await _countryService.GetAllCountriesAsync();
+            ViewData["CountryId"] = new SelectList(countries, "CountryId", "CountryName", vm.CountryId);
+            return View(vm);
         }
 
         // GET: States/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            if (id == null) return NotFound();
 
-            var state = await _context.States.FindAsync(id);
-            if (state == null)
-            {
-                return NotFound();
-            }
-            ViewData["CountryId"] = new SelectList(_context.Countries, "CountryId", "CountryName", state.CountryId);
-            return View(state);
+            var vm = await _stateService.GetStateByIdAsync(id.Value);
+
+            if (vm == null) return NotFound();
+
+            var countries = await _countryService.GetAllCountriesAsync();
+            ViewData["CountryId"] = new SelectList(countries, "CountryId", "CountryName", vm.CountryId);
+            return View(vm);
         }
 
         // POST: States/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("StateId,StateName,CountryId")] State state)
+        public async Task<IActionResult> Edit(int id, StateViewModel vm)
         {
-            if (id != state.StateId)
-            {
-                return NotFound();
-            }
+            if (id != vm.StateId) return NotFound();
 
             if (ModelState.IsValid)
             {
                 try
                 {
-                    _context.Update(state);
-                    await _context.SaveChangesAsync();
+                    await _stateService.UpdateStateAsync(vm);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!StateExists(state.StateId))
-                    {
+                    if (!await _stateService.StateExistsAsync(vm.StateId))
                         return NotFound();
-                    }
                     else
-                    {
                         throw;
-                    }
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["CountryId"] = new SelectList(_context.Countries, "CountryId", "CountryName", state.CountryId);
-            return View(state);
+
+            var countries = await _countryService.GetAllCountriesAsync();
+            ViewData["CountryId"] = new SelectList(countries, "CountryId", "CountryName", vm.CountryId);
+            return View(vm);
         }
 
         // GET: States/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            if (id == null) return NotFound();
 
-            var state = await _context.States
-                .Include(s => s.Country)
-                .FirstOrDefaultAsync(m => m.StateId == id);
-            if (state == null)
-            {
-                return NotFound();
-            }
+            var vm = await _stateService.GetStateByIdAsync(id.Value);
 
-            return View(state);
+            if (vm == null) return NotFound();
+
+            return View(vm);
         }
 
         // POST: States/Delete/5
@@ -146,19 +119,8 @@ namespace FirstDotNETApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var state = await _context.States.FindAsync(id);
-            if (state != null)
-            {
-                _context.States.Remove(state);
-            }
-
-            await _context.SaveChangesAsync();
+            await _stateService.DeleteStateAsync(id);
             return RedirectToAction(nameof(Index));
-        }
-
-        private bool StateExists(int id)
-        {
-            return _context.States.Any(e => e.StateId == id);
         }
     }
 }

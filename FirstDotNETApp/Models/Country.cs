@@ -10,10 +10,8 @@ namespace FirstDotNETApp.Models;
 // Partial -> Class can be split into multiple files
 public partial class Country
 {
-    [Display(Name = "Country Id")]
     public int CountryId { get; set; }
 
-    [Display(Name = "Country Name")]
     public string CountryName { get; set; } = null!;
 
     // Navigation property

@@ -1,4 +1,4 @@
-@model FirstDotNETApp.Models.District
+@model FirstDotNETApp.ViewModels.DistrictViewModel
 
 @{
     ViewData["Title"] = "Details";
@@ -26,13 +26,13 @@
             @Html.DisplayNameFor(model => model.StateId)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.State.StateId)
+            @Html.DisplayFor(model => model.StateId)
         </dd>
         <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.State)
+            @Html.DisplayNameFor(model => model.StateId)
         </dt>
         <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.State.StateName)
+            @Html.DisplayFor(model => model.StateName)
         </dd>
     </dl>
 </div>

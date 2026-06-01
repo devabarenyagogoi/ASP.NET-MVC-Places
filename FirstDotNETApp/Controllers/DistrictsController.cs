@@ -1,144 +1,139 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
-using FirstDotNETApp.Data;
+using FirstDotNETApp.Interfaces;
 using FirstDotNETApp.Models;
+using FirstDotNETApp.ViewModels;
 
 namespace FirstDotNETApp.Controllers
 {
     public class DistrictsController : Controller
     {
-        private readonly AppDbContext _context;
+        private readonly IDistrictService _districtService;
+        private readonly IStateService _stateService;
 
-        public DistrictsController(AppDbContext context)
+        public DistrictsController(
+            IDistrictService districtService,
+            IStateService stateService)
         {
-            _context = context;
+            _districtService = districtService;
+            _stateService = stateService;
         }
 
         // GET: Districts
         public async Task<IActionResult> Index()
         {
-            var appDbContext = _context.Districts.Include(d => d.State);
-            return View(await appDbContext.ToListAsync());
+            var districts = await _districtService.GetAllDistrictsAsync();
+            return View(districts);
         }
 
         // GET: Districts/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
-            {
                 return NotFound();
-            }
 
-            var district = await _context.Districts
-                .Include(d => d.State)
-                .FirstOrDefaultAsync(m => m.DistrictId == id);
-            if (district == null)
-            {
+            var vm = await _districtService.GetDistrictByIdAsync(id.Value);
+
+            if (vm == null)
                 return NotFound();
-            }
 
-            return View(district);
+            return View(vm);
         }
 
         // GET: Districts/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            ViewData["StateId"] = new SelectList(_context.States, "StateId", "StateName");
-            return View();
+            var states = await _stateService.GetAllStatesAsync();
+
+            ViewData["StateId"] = new SelectList(
+                states,
+                "StateId",
+                "StateName");
+
+            return View(new DistrictViewModel());
         }
 
         // POST: Districts/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("DistrictId,DistrictName,StateId")] District district)
+        public async Task<IActionResult> Create(DistrictViewModel vm)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(district);
-                await _context.SaveChangesAsync();
+                await _districtService.CreateDistrictAsync(vm);
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["StateId"] = new SelectList(_context.States, "StateId", "StateName", district.StateId);
-            return View(district);
+
+            var states = await _stateService.GetAllStatesAsync();
+
+            ViewData["StateId"] = new SelectList(
+                states,
+                "StateId",
+                "StateName",
+                vm.StateId);
+
+            return View(vm);
         }
 
         // GET: Districts/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
-            {
                 return NotFound();
-            }
 
-            var district = await _context.Districts.FindAsync(id);
-            if (district == null)
-            {
+            var vm = await _districtService.GetDistrictByIdAsync(id.Value);
+
+            if (vm == null)
                 return NotFound();
-            }
-            ViewData["StateId"] = new SelectList(_context.States, "StateId", "StateName", district.StateId);
-            return View(district);
+
+            var states = await _stateService.GetAllStatesAsync();
+
+            ViewData["StateId"] = new SelectList(
+                states,
+                "StateId",
+                "StateName",
+                vm.StateId);
+
+            return View(vm);
         }
 
         // POST: Districts/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("DistrictId,DistrictName,StateId")] District district)
+        public async Task<IActionResult> Edit(int id, DistrictViewModel vm)
         {
-            if (id != district.DistrictId)
-            {
+            if (id != vm.DistrictId)
                 return NotFound();
-            }
 
             if (ModelState.IsValid)
             {
-                try
-                {
-                    _context.Update(district);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!DistrictExists(district.DistrictId))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
+                await _districtService.UpdateDistrictAsync(vm);
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["StateId"] = new SelectList(_context.States, "StateId", "StateName", district.StateId);
-            return View(district);
+
+            var states = await _stateService.GetAllStatesAsync();
+
+            ViewData["StateId"] = new SelectList(
+                states,
+                "StateId",
+                "StateName",
+                vm.StateId);
+
+            return View(vm);
         }
 
         // GET: Districts/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
-            {
                 return NotFound();
-            }
 
-            var district = await _context.Districts
-                .Include(d => d.State)
-                .FirstOrDefaultAsync(m => m.DistrictId == id);
-            if (district == null)
-            {
+            var vm = await _districtService.GetDistrictByIdAsync(id.Value);
+
+            if (vm == null)
                 return NotFound();
-            }
 
-            return View(district);
+            return View(vm);
         }
 
         // POST: Districts/Delete/5
@@ -146,19 +141,8 @@ namespace FirstDotNETApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var district = await _context.Districts.FindAsync(id);
-            if (district != null)
-            {
-                _context.Districts.Remove(district);
-            }
-
-            await _context.SaveChangesAsync();
+            await _districtService.DeleteDistrictAsync(id);
             return RedirectToAction(nameof(Index));
-        }
-
-        private bool DistrictExists(int id)
-        {
-            return _context.Districts.Any(e => e.DistrictId == id);
         }
     }
 }

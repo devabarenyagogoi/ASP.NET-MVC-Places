@@ -1,4 +1,4 @@
-@model IEnumerable<FirstDotNETApp.Models.District>
+@model IEnumerable<FirstDotNETApp.ViewModels.DistrictViewModel>
 
 @{
     ViewData["Title"] = "Index";
@@ -16,7 +16,7 @@
                 @Html.DisplayNameFor(model => model.DistrictName)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.State)
+                @Html.DisplayNameFor(model => model.StateName)
             </th>
             <th></th>
         </tr>
@@ -28,7 +28,7 @@
                 @Html.DisplayFor(modelItem => item.DistrictName)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.State.StateName)
+                @Html.DisplayFor(modelItem => item.StateName)
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.DistrictId">Edit</a> |

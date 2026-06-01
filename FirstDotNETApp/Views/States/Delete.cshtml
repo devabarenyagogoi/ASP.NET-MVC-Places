@@ -1,4 +1,4 @@
-@model FirstDotNETApp.Models.State
+@model FirstDotNETApp.ViewModels.StateViewModel
 
 @{
     ViewData["Title"] = "Delete";
@@ -18,10 +18,10 @@
             @Html.DisplayFor(model => model.StateName)
         </dd>
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Country)
+            @Html.DisplayNameFor(model => model.CountryId)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Country.CountryId)
+            @Html.DisplayFor(model => model.CountryId)
         </dd>
     </dl>
     

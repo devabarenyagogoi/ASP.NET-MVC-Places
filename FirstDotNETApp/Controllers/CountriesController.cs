@@ -1,3 +1,7 @@
+<<<<<<< Updated upstream
+=======
+
+>>>>>>> Stashed changes
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,11 +11,17 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using FirstDotNETApp.Data;
 using FirstDotNETApp.Models;
+<<<<<<< Updated upstream
+=======
+using FirstDotNETApp.ViewModels;
+using FirstDotNETApp.Interfaces;
+>>>>>>> Stashed changes
 
 namespace FirstDotNETApp.Controllers
 {
     public class CountriesController : Controller
     {
+<<<<<<< Updated upstream
         private readonly AppDbContext _context;
 
         // Dependency Injection
@@ -27,6 +37,21 @@ namespace FirstDotNETApp.Controllers
         }
 
         // GET: Countries/Details/5
+=======
+        private readonly ICountryService _countryService;
+
+        public CountriesController(ICountryService countryService)
+        {
+            _countryService = countryService;
+        }
+
+        public async Task<IActionResult> Index()
+        {
+            var countries = await _countryService.GetAllCountriesAsync();
+            return View(countries);
+        }
+
+>>>>>>> Stashed changes
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -34,22 +59,32 @@ namespace FirstDotNETApp.Controllers
                 return NotFound();
             }
 
+<<<<<<< Updated upstream
             var country = await _context.Countries
                 .FirstOrDefaultAsync(m => m.CountryId == id);
             if (country == null)
+=======
+            var vm = await _countryService.GetCountryByIdAsync(id.Value);
+
+            if (vm == null)
+>>>>>>> Stashed changes
             {
                 return NotFound();
             }
 
-            return View(country);
+            return View(vm);
         }
 
+<<<<<<< Updated upstream
         // GET: Countries/Create
+=======
+>>>>>>> Stashed changes
         public IActionResult Create()
         {
-            return View();
+            return View(new CountryViewModel());
         }
 
+<<<<<<< Updated upstream
         // POST: Countries/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         [HttpPost]
@@ -60,12 +95,20 @@ namespace FirstDotNETApp.Controllers
             {
                 _context.Add(country);
                 await _context.SaveChangesAsync();
+=======
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create(CountryViewModel vm)
+        {
+            if (ModelState.IsValid)
+            {
+                await _countryService.CreateCountryAsync(vm);
+>>>>>>> Stashed changes
                 return RedirectToAction(nameof(Index));
             }
-            return View(country);
+            return View(vm);
         }
 
-        // GET: Countries/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -73,21 +116,28 @@ namespace FirstDotNETApp.Controllers
                 return NotFound();
             }
 
+<<<<<<< Updated upstream
             var country = await _context.Countries.FindAsync(id);
             if (country == null)
+=======
+            var vm = await _countryService.GetCountryByIdAsync(id.Value);
+            if (vm == null)
+>>>>>>> Stashed changes
             {
                 return NotFound();
             }
-            return View(country);
+            return View(vm);
         }
 
-        // POST: Countries/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
         [HttpPost]
         [ValidateAntiForgeryToken]
+<<<<<<< Updated upstream
         public async Task<IActionResult> Edit(int id, [Bind("CountryId,CountryName")] Country country)
+=======
+        public async Task<IActionResult> Edit(int id, CountryViewModel vm)
+>>>>>>> Stashed changes
         {
-            if (id != country.CountryId)
+            if (id != vm.CountryId)
             {
                 return NotFound();
             }
@@ -96,12 +146,16 @@ namespace FirstDotNETApp.Controllers
             {
                 try
                 {
+<<<<<<< Updated upstream
                     _context.Update(country);
                     await _context.SaveChangesAsync();
+=======
+                    await _countryService.UpdateCountryAsync(vm);
+>>>>>>> Stashed changes
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!CountryExists(country.CountryId))
+                    if (!await _countryService.CountryExistsAsync(vm.CountryId))
                     {
                         return NotFound();
                     }
@@ -112,10 +166,9 @@ namespace FirstDotNETApp.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(country);
+            return View(vm);
         }
 
-        // GET: Countries/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -123,21 +176,23 @@ namespace FirstDotNETApp.Controllers
                 return NotFound();
             }
 
-            var country = await _context.Countries
-                .FirstOrDefaultAsync(m => m.CountryId == id);
-            if (country == null)
+            var vm = await _countryService.GetCountryByIdAsync(id.Value);
+            if (vm == null)
             {
                 return NotFound();
             }
-
-            return View(country);
+            return View(vm);
         }
 
+<<<<<<< Updated upstream
         // POST: Countries/Delete/5
+=======
+>>>>>>> Stashed changes
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
+<<<<<<< Updated upstream
             var country = await _context.Countries.FindAsync(id);
             if (country != null)
             {
@@ -152,5 +207,11 @@ namespace FirstDotNETApp.Controllers
         {
             return _context.Countries.Any(e => e.CountryId == id);
         }
+=======
+            await _countryService.DeleteCountryAsync(id);
+            return RedirectToAction(nameof(Index));
+        }
+
+>>>>>>> Stashed changes
     }
 }
