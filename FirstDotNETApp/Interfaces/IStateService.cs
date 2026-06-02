@@ -15,5 +15,6 @@ namespace FirstDotNETApp.Interfaces
         Task DeleteStateAsync(int id);
 
         Task<bool> StateExistsAsync(int id);
+
     }
 }

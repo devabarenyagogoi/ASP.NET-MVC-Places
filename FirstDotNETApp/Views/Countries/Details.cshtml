@@ -6,25 +6,35 @@
 
 <h1>Details</h1>
 
-<div>
+<div class="card-custom">
     <h4>Country</h4>
     <hr />
-    <dl class="row">
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.CountryId)
+
+    <dl class="row mb-0">
+        <dt class="col-sm-3">
+            Country ID
         </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.CountryId)
+        <dd class="col-sm-9">
+            @Model.CountryId
         </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.CountryName)
+
+        <dt class="col-sm-3">
+            Country Name
         </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.CountryName)
+        <dd class="col-sm-9">
+            @Model.CountryName
         </dd>
     </dl>
-</div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.CountryId">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+
+    <hr />
+
+    <div class="d-flex gap-2">
+        <a asp-action="Edit" asp-route-id="@Model.CountryId" class="btn btn-primary">
+            Edit
+        </a>
+
+        <a asp-action="Index" class="btn btn-secondary">
+            Back
+        </a>
+    </div>
 </div>

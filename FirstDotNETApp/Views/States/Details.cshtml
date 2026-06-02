@@ -6,37 +6,42 @@
 
 <h1>Details</h1>
 
-<div>
+<div class="card-custom">
     <h4>State</h4>
     <hr />
-    <dl class="row">
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.StateId)
+
+    <dl class="row mb-0">
+        <dt class="col-sm-3">
+            State ID
         </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.StateId)
+        <dd class="col-sm-9">
+            @Model.StateId
         </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.StateName)
+
+        <dt class="col-sm-3">
+            State Name
         </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.StateName)
+        <dd class="col-sm-9">
+            @Model.StateName
         </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.CountryId)
+
+        <dt class="col-sm-3">
+            Country Name
         </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.CountryId)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.CountryName)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.CountryName)
+        <dd class="col-sm-9">
+            @Model.CountryName
         </dd>
     </dl>
-</div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.StateId">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+
+    <hr />
+
+    <div class="d-flex gap-2">
+        <a asp-action="Edit" asp-route-id="@Model.StateId" class="btn btn-primary">
+            Edit
+        </a>
+
+        <a asp-action="Index" class="btn btn-secondary">
+            Back
+        </a>
+    </div>
 </div>

@@ -20,8 +20,8 @@ namespace FirstDotNETApp.Controllers
         // GET: States
         public async Task<IActionResult> Index()
         {
-            var states = await _stateService.GetAllStatesAsync();
-            return View(states);
+            var items = await _stateService.GetAllStatesAsync();
+            return View(items);
         }
 
         // GET: States/Details/5

@@ -16,8 +16,8 @@ namespace FirstDotNETApp.Controllers
         // GET: Countries
         public async Task<IActionResult> Index()
         {
-            var countries = await _countryService.GetAllCountriesAsync();
-            return View(countries);
+            var items = await _countryService.GetAllCountriesAsync();
+            return View(items);
         }
 
         // GET: Countries/Details/5

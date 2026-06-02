@@ -22,8 +22,8 @@ namespace FirstDotNETApp.Controllers
         // GET: Districts
         public async Task<IActionResult> Index()
         {
-            var districts = await _districtService.GetAllDistrictsAsync();
-            return View(districts);
+            var items = await _districtService.GetAllDistrictsAsync();
+            return View(items);
         }
 
         // GET: Districts/Details/5

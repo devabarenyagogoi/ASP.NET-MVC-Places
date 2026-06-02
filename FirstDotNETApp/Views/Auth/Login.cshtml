@@ -1,0 +1,42 @@
+﻿@model FirstDotNETApp.ViewModels.LoginViewModel
+
+@{
+    ViewData["Title"] = "Login";
+}
+
+<div class="login-container">
+    <div class="login-card">
+
+        <h2>Login</h2>
+
+        @if (ViewBag.Error != null)
+        {
+            <div class="alert alert-danger">
+                @ViewBag.Error
+            </div>
+        }
+
+        <form asp-action="Login" method="post">
+
+            <div class="mb-3">
+                <label>User ID</label>
+                <input asp-for="UserId"
+                       class="form-control" />
+            </div>
+
+            <div class="mb-3">
+                <label>Password</label>
+                <input asp-for="Password"
+                       type="password"
+                       class="form-control" />
+            </div>
+
+            <button type="submit"
+                    class="btn btn-primary w-100">
+                Login
+            </button>
+
+        </form>
+
+    </div>
+</div>
