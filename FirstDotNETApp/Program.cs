@@ -3,6 +3,7 @@ using FirstDotNETApp.Models;
 using Microsoft.EntityFrameworkCore;
 using FirstDotNETApp.Interfaces;
 using FirstDotNETApp.Services;
+using FirstDotNETApp.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,6 +15,9 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 builder.Services.AddScoped<ICountryService, CountryService>();
 builder.Services.AddScoped<IStateService, StateService>();
 builder.Services.AddScoped<IDistrictService, DistrictService>();
+
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IUserService, UserService>();
 
 builder.Services.AddSession();
 

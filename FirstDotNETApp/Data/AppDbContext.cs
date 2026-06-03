@@ -22,6 +22,10 @@ public partial class AppDbContext : DbContext
 
     public virtual DbSet<State> States { get; set; }
 
+    public virtual DbSet<User> Users { get; set; }
+
+    public virtual DbSet<UserToken> UserTokens { get; set; }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Country>(entity =>
@@ -71,6 +75,24 @@ public partial class AppDbContext : DbContext
             entity.HasOne(d => d.Country).WithMany(p => p.States)
                 .HasForeignKey(d => d.CountryId)
                 .HasConstraintName("FK__State__country_i__4CA06362");
+        });
+
+        modelBuilder.Entity<User>(entity =>
+        {
+            entity.HasKey(e => e.UserId);
+
+            entity.ToTable("Users");
+        });
+
+        modelBuilder.Entity<UserToken>(entity =>
+        {
+            entity.HasKey(e => e.TokenId);
+
+            entity.ToTable("UserTokens");
+
+            entity.HasOne<User>()
+                .WithMany()
+                .HasForeignKey(e => e.UserId);
         });
 
         OnModelCreatingPartial(modelBuilder);
