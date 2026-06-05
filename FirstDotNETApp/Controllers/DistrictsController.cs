@@ -3,9 +3,11 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using FirstDotNETApp.Interfaces;
 using FirstDotNETApp.Models;
 using FirstDotNETApp.ViewModels;
+using FirstDotNETApp.Filters;
 
 namespace FirstDotNETApp.Controllers
 {
+    [TokenAuthorize]
     public class DistrictsController : Controller
     {
         private readonly IDistrictService _districtService;

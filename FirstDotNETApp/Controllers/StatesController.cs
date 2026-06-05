@@ -1,3 +1,4 @@
+using FirstDotNETApp.Filters;
 using FirstDotNETApp.Interfaces;
 using FirstDotNETApp.ViewModels;
 using Microsoft.AspNetCore.Mvc;
@@ -6,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FirstDotNETApp.Controllers
 {
+    [TokenAuthorize]
     public class StatesController : Controller
     {
         private readonly IStateService _stateService;

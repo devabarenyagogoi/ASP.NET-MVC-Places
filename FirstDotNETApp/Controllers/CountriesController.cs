@@ -2,9 +2,11 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using FirstDotNETApp.Interfaces;
 using FirstDotNETApp.ViewModels;
+using FirstDotNETApp.Filters;
 
 namespace FirstDotNETApp.Controllers
 {
+    [TokenAuthorize]
     public class CountriesController : Controller
     {
         private readonly ICountryService _countryService;

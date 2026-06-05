@@ -1,23 +1,25 @@
 ﻿using FirstDotNETApp.Data;
 using FirstDotNETApp.Interfaces;
 using FirstDotNETApp.Models;
+using FirstDotNETApp.Repositories;
 using FirstDotNETApp.ViewModels;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Linq;
-using System.Security.Cryptography;
-using System.Text;
 
 public class AccountController : Controller
 {
-    private readonly AppDbContext _context;
     private readonly IConfiguration _configuration;
+    private readonly IUserService _userService;
     private readonly IUserRepository _userRepository;
 
-    public AccountController(AppDbContext context, IConfiguration configuration, IUserRepository userRepository)
+    public AccountController(
+        IConfiguration configuration,
+        IUserService userService,
+        IUserRepository userRepository)
     {
-        _context = context;
         _configuration = configuration;
+        _userService = userService;
         _userRepository = userRepository;
     }
 
@@ -30,11 +32,9 @@ public class AccountController : Controller
     [HttpPost]
     public IActionResult Login(LoginViewModel model)
     {
-        string hashedPassword = HashPassword(model.Password);
-
-        var user = _userRepository.GetUserByUsernameAndPassword(
+        var user = _userService.ValidateUser(
             model.UserId,
-        hashedPassword);
+            model.Password);
 
         if (user == null)
         {
@@ -42,7 +42,7 @@ public class AccountController : Controller
             return View(model);
         }
 
-        string token = Guid.NewGuid().ToString();
+        string token = _userService.GenerateToken(user.Username);
 
         var userToken = new UserToken
         {
@@ -53,8 +53,7 @@ public class AccountController : Controller
             IsActive = true
         };
 
-        _context.UserTokens.Add(userToken);
-        _context.SaveChanges();
+        _userRepository.SaveToken(userToken);
 
         HttpContext.Session.SetString("UserId", user.Username);
         HttpContext.Session.SetString("Token", token);
@@ -68,14 +67,7 @@ public class AccountController : Controller
 
         if (!string.IsNullOrEmpty(token))
         {
-            var userToken = _context.UserTokens
-                .FirstOrDefault(t => t.Token == token);
-
-            if (userToken != null)
-            {
-                userToken.IsActive = false;
-                _context.SaveChanges();
-            }
+            _userRepository.DeactivateToken(token);
         }
 
         HttpContext.Session.Clear();
@@ -83,13 +75,13 @@ public class AccountController : Controller
         return RedirectToAction("Login");
     }
 
-    private string HashPassword(string password)
+    private bool ValidateCurrentToken()
     {
-        using var sha256 = SHA256.Create();
+        string? token = HttpContext.Session.GetString("Token");
 
-        byte[] bytes = Encoding.UTF8.GetBytes(password);
-        byte[] hash = sha256.ComputeHash(bytes);
+        if (string.IsNullOrEmpty(token))
+            return false;
 
-        return Convert.ToHexString(hash).ToLower();
+        return _userService.IsTokenValid(token);
     }
 }

@@ -22,5 +22,28 @@ namespace FirstDotNETApp.Repositories
                 u.PasswordHash == passwordHash &&
                 u.IsActive);
         }
+
+        public void SaveToken(UserToken userToken)
+        {
+            _context.UserTokens.Add(userToken);
+            _context.SaveChanges();
+        }
+
+        public void DeactivateToken(string token)
+        {
+            var userToken = _context.UserTokens
+                .FirstOrDefault(t => t.Token == token);
+
+            if (userToken != null)
+            {
+                userToken.IsActive = false;
+                _context.SaveChanges();
+            }
+        }
+        public UserToken? GetToken(string token)
+        {
+            return _context.UserTokens
+                .FirstOrDefault(t => t.Token == token);
+        }
     }
 }

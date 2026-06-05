@@ -1,18 +1,30 @@
+using FirstDotNETApp.Filters;
+using FirstDotNETApp.Interfaces;
 using FirstDotNETApp.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 
 namespace FirstDotNETApp.Controllers
 {
+    [TokenAuthorize]
     public class HomeController : Controller
     {
+        private readonly IUserService _userService;
+
+        public HomeController(IUserService userService)
+        {
+            _userService = userService;
+        }
         public IActionResult Index()
         {
-            string? userId =
-                HttpContext.Session.GetString("UserId");
+            string? token =
+                HttpContext.Session.GetString("Token");
 
-            if (string.IsNullOrEmpty(userId))
+            if (string.IsNullOrEmpty(token) ||
+                !_userService.IsTokenValid(token))
             {
+                HttpContext.Session.Clear();
+
                 return RedirectToAction(
                     "Login",
                     "Account");
