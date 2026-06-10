@@ -19,10 +19,10 @@ namespace FirstDotNETApp.Filters
             token = userService?.ExtractBearerToken(authHeader);
 
             // Session token
-            /*if (string.IsNullOrEmpty(token))
+            if (string.IsNullOrEmpty(token))
             {
                 token = context.HttpContext.Session.GetString("Token");
-            }*/
+            }
 
             bool isValid =
                 !string.IsNullOrEmpty(token) &&
